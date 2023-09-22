@@ -1,0 +1,15 @@
+#8 EMA, 21 EMA, 34 EMA, 50 SMA, 200 SMA
+
+def EMAa = ExpAverage(close, 13);
+def EMAb = ExpAverage(close, 21);
+def EMAc = ExpAverage(close, 34);
+def SMAa = SimpleMovingAvg(close, 50);
+def SMAb = SimpleMovingAvg(close, 200);
+
+def bullStacked = EMAa > EMAb and EMAb > EMAc and SMAa > SMAb;
+
+def bearStacked = EMAa < EMAb and EMAb < EMAc and SMAa < SMAb;
+
+def bullStackedPlot = bullStacked and !bullStacked[1];
+
+plot bearStackedPlot = bearStacked and !bearStacked[1];
