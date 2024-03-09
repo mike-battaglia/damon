@@ -7,15 +7,16 @@ def nK_Mid = 1.5;
 def nK_Low = 2.0;  
 def price = close;
 
-def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = 2.0, "length" = 20.0 )."upperband" - KeltnerChannels("factor" = 1.5, "length" = 20.0)."Upper_Band";
-def BolKelDelta_Low = reference BollingerBands("num_dev_up" = 2.0, "length" = 20.0 )."upperband" - KeltnerChannels("factor" = 2.0, "length" = 20.0)."Upper_Band";
-def BolKelDelta_High = reference BollingerBands("num_dev_up" = 2.0, "length" = 20.0 )."upperband" - KeltnerChannels("factor" = 1.0, "length" = 20.0)."Upper_Band";
+def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Mid, "length" = Length)."Upper_Band";
+def BolKelDelta_Low = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Low, "length" = Length)."Upper_Band";
+def BolKelDelta_High = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_High, "length" = Length)."Upper_Band";
+
 
 def sqLow = BolKelDelta_Low <= 0;
 def sqMid = BolKelDelta_Mid <= 0;
 def sqHigh = BolKelDelta_High <= 0;
 
-def selectedNK = if sqMid then nK_Mid else if sqLow then nK_Low else if sqHigh then nK_High else nK_Mid;
+def selectedNK = if sqLow then nK_Low else if sqMid then nK_Mid else if sqHigh then nK_High else nK_Mid;
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
@@ -53,18 +54,12 @@ def sumSqueezes = Sum(theSqueezes, 10);
 def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 AND TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
 ### ???
 
-###Version1
-#AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
-#AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
-#AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
-#AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
-
 ###Version2
 def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
 def theRatio = (sumFiredLong/squeezeCount)*100;
 
-AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
+AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%"+sqLow);
 AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
 AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
 AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
