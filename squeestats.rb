@@ -7,7 +7,6 @@ def inSqueezeMid = TTM_Squeeze(price = close, length = 20.0, nk = 1.5, nBB = 2.0
 def squeezeMomentumMid = TTM_Squeeze(price = close, length = 20.0, nk = 1.5, nBB = 2.0 );
 def firedMid = !inSqueezeMid and inSqueezeMid[1];
 def firedLongMid = firedMid and (squeezeMomentumMid > 0);
-def firedShortMid = firedMid and (squeezeMomentumMid <= 0);
 
 def inSqueezeHigh = TTM_Squeeze(price = close, length = 20.0, nk = 1.0, nBB = 2.0 );
 def squeezeMomentumHigh = TTM_Squeeze(price = close, length = 20.0, nk = 1.0, nBB = 2.0 );
