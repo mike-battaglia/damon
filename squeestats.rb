@@ -21,4 +21,4 @@ def tSumFiredHigh = TotalSum(firedHigh);
 AddLabel( BolKelDelta_Low <= 0,"Low "+tSumFiredLow+" ("+(firedLongLow/tSumFiredLow)+")");
 AddLabel( BolKelDelta_Mid <= 0,"Mid "+tSumFiredMid+" ("+(firedLongMid/tSumFiredMid)+")");
 AddLabel( BolKelDelta_High <= 0,"High "+tSumFiredHigh+" ("+(firedLongHigh/tSumFiredHigh)+")");
-#AddLabel( !sLow and !sMid and !sHigh, "None");
+AddLabel( !(BolKelDelta_Low <= 0) and !(BolKelDelta_Mid <= 0) and !(BolKelDelta_High <= 0), "None");
