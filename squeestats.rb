@@ -17,15 +17,15 @@ def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = 2.0, "length" = 20
 def BolKelDelta_Low = reference BollingerBands("num_dev_up" = 2.0, "length" = 20.0 )."upperband" - KeltnerChannels("factor" = 2.0, "length" = 20.0)."Upper_Band";
 def BolKelDelta_High = reference BollingerBands("num_dev_up" = 2.0, "length" = 20.0 )."upperband" - KeltnerChannels("factor" = 1.0, "length" = 20.0)."Upper_Band";
 
-def sLow = BolKelDelta_Low <= 0;
-def sMid = BolKelDelta_Mid <= 0;
-def sHigh = BolKelDelta_High <= 0;
+#def sLow = BolKelDelta_Low <= 0;
+#def sMid = BolKelDelta_Mid <= 0;
+#def sHigh = BolKelDelta_High <= 0;
 
 def tSumFiredLow = TotalSum(firedLow);
 def tSumFiredMid = TotalSum(firedMid);
 def tSumFiredHigh = TotalSum(firedHigh);
 
-AddLabel( sLow,"Low "+tSumFiredLow+" ("+(firedLongLow/tSumFiredLow)+")");
-AddLabel( sMid,"Mid "+tSumFiredMid+" ("+(firedLongMid/tSumFiredMid)+")");
-AddLabel( sHigh,"High "+tSumFiredHigh+" ("+(firedLongHigh/tSumFiredHigh)+")");
+AddLabel( BolKelDelta_Low <= 0,"Low "+tSumFiredLow+" ("+(firedLongLow/tSumFiredLow)+")");
+AddLabel( BolKelDelta_Mid <= 0,"Mid "+tSumFiredMid+" ("+(firedLongMid/tSumFiredMid)+")");
+AddLabel( BolKelDelta_High <= 0,"High "+tSumFiredHigh+" ("+(firedLongHigh/tSumFiredHigh)+")");
 #AddLabel( !sLow and !sMid and !sHigh, "None");
