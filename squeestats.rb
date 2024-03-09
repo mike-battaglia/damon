@@ -42,16 +42,32 @@ def priceFired = if fired then close[1] else priceFired[1];
 def completedPriceMovePercent =  if !postSqueezeRun and postSqueezeRun[1] then AbsValue(100 * (close[1] - priceFired[1]) / priceFired[1]) else 0;
 def avePostSqueezePercent = TotalSum(completedPriceMovePercent) / TotalSum(fired);
 
-def squeezeLength = if inSqueeze then squeezeLength[1] + 1 else 0;
-def completedSqueezeLength = if fired then squeezeLength[1] else 0;
+#def squeezeLength = if inSqueeze then squeezeLength[1] + 1 else 0;
+#def completedSqueezeLength = if fired then squeezeLength[1] else 0;
 def squeezeCount = TotalSum(fired);
-def aveSqueezeLength = Round(TotalSum(completedSqueezeLength) / squeezeCount, 0);
+#def aveSqueezeLength = Round(TotalSum(completedSqueezeLength) / squeezeCount, 0);
+
+### ???
+def theSqueezes = if TTM_Squeeze () .SqueezeAlert == 0 then 1 else 0;
+def sumSqueezes = Sum(theSqueezes, 10);
+def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 AND TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
+### ???
 
 def theRatio = firedLong/squeezeCount;
 
-AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
-AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
-AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
+###Version1
+#AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
+#AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
+#AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
+#AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
+
+###Version2
+def sumFiredLong = TotalSum(firedLong);
+def sumFiredShort = TotalSum(firedShort);
+
+AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
+AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
+AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
 AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
 
-AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
+#AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
