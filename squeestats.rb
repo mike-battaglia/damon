@@ -53,8 +53,6 @@ def sumSqueezes = Sum(theSqueezes, 10);
 def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 AND TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
 ### ???
 
-def theRatio = firedLong/squeezeCount;
-
 ###Version1
 #AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
 #AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+firedLong+", Short="+firedShort);
@@ -64,10 +62,11 @@ def theRatio = firedLong/squeezeCount;
 ###Version2
 def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
+def theRatio = (sumFiredLong/squeezeCount)*100;
 
-AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
-AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
-AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort);
+AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
+AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
+AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
 AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
 
 #AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
