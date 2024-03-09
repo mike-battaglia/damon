@@ -1,10 +1,10 @@
 input LongShortDefinition = { default HistAboveBelowZero, HistRisingFalling};
 
-def nBB = 2.0; 
-def Length = 20.0; 
-def nK_High = 1.0; 
+def nBB = 2.0;
+def Length = 20.0;
+def nK_High = 1.0;
 def nK_Mid = 1.5;
-def nK_Low = 2.0;  
+def nK_Low = 2.0;
 def price = close;
 
 def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Mid, "length" = Length)."Upper_Band";
@@ -16,7 +16,9 @@ def sqLow = BolKelDelta_Low <= 0;
 def sqMid = BolKelDelta_Mid <= 0;
 def sqHigh = BolKelDelta_High <= 0;
 
-def selectedNK = if sqLow then nK_Low else if sqMid then nK_Mid else if sqHigh then nK_High else nK_Mid;
+def selectedNK = if sqHigh then nK_High else if sqMid then nK_Mid else if sqLow then nK_Low else nK_Mid;
+
+#def selectedNK = nK_Mid;
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
@@ -34,34 +36,21 @@ def aveDownCycleLength = Round(TotalSum(completedDownMomentumLength) / downCycle
 def fired = !inSqueeze and inSqueeze[1];
 def firedLong = fired and ((LongShortDefinition == LongShortDefinition.HistAboveBelowZero and  squeezeMomentum > 0) or (LongShortDefinition == LongShortDefinition.HistRisingFalling and  squeezeMomentum > squeezeMomentum[1]));
 def firedShort = fired and ((LongShortDefinition == LongShortDefinition.HistAboveBelowZero and  squeezeMomentum <= 0) or (LongShortDefinition == LongShortDefinition.HistRisingFalling and  squeezeMomentum < squeezeMomentum[1]));
-def postSqueezeRun = if fired then 1 else if inSqueeze or downMomentumStart or upMomentumStart then 0 else postSqueezeRun[1];
-def postSqueezeRunLength = if postSqueezeRun and !(downMomentumStart or upMomentumStart) then postSqueezeRunLength[1] + 1 else 0;
-def completedPostSqueezeRun = if !postSqueezeRun and postSqueezeRun[1] then postSqueezeRunLength[1] else 0;
-def postSqueezeRuns =  if !postSqueezeRun and postSqueezeRun[1] then 1 else 0;
-def avePostSqueezeRun = TotalSum(completedPostSqueezeRun) / TotalSum(fired);
-def priceFired = if fired then close[1] else priceFired[1];
-def completedPriceMovePercent =  if !postSqueezeRun and postSqueezeRun[1] then AbsValue(100 * (close[1] - priceFired[1]) / priceFired[1]) else 0;
-def avePostSqueezePercent = TotalSum(completedPriceMovePercent) / TotalSum(fired);
 
-#def squeezeLength = if inSqueeze then squeezeLength[1] + 1 else 0;
-#def completedSqueezeLength = if fired then squeezeLength[1] else 0;
 def squeezeCount = TotalSum(fired);
-#def aveSqueezeLength = Round(TotalSum(completedSqueezeLength) / squeezeCount, 0);
 
 ### ???
 def theSqueezes = if TTM_Squeeze () .SqueezeAlert == 0 then 1 else 0;
 def sumSqueezes = Sum(theSqueezes, 10);
-def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 AND TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
+def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 and TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
 ### ???
 
-###Version2
 def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
-def theRatio = (sumFiredLong/squeezeCount)*100;
+#def theRatio = (sumFiredLong/squeezeCount)*100;
 
-AddLabel( sqLow,"Low, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%"+sqLow);
-AddLabel( sqMid,"Mid, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
-AddLabel( sqHigh,"High, Count="+squeezeCount+", Long="+sumFiredLong+", Short="+sumFiredShort+", "+theRatio+"%");
-AddLabel( !(sqLow) and !(sqMid) and !(sqHigh), "None");
+AddLabel( sqLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
+AddLabel( sqMid, "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
+AddLabel( sqHigh, "High " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
 
 #AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
