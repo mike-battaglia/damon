@@ -27,7 +27,7 @@ def selectedNK = if sqHigh > 0 then nK_High else if sqMid > 0 then nK_Mid else n
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
 
-#def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = if sqHigh then nK_High else if sqMid then nK_Mid else sqLow, nBB = nBB ).SqueezeAlert == 0;
+#def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = if sqHigh > 0 then nK_High else if sqMid > 0 then nK_Mid else nk_Low, nBB = nBB ).SqueezeAlert == 0;
 
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
 def upMomentumStart = squeezeMomentum > squeezeMomentum[1] and squeezeMomentum[1] <= squeezeMomentum[2];
@@ -57,8 +57,8 @@ def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
 #def theRatio = (sumFiredLong/squeezeCount)*100;
 
-AddLabel( sqLow>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
-AddLabel( sqMid>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
-AddLabel( sqHigh>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+AddLabel( sqLow>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+AddLabel( sqMid>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+AddLabel( sqHigh>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
 
 #AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
