@@ -16,12 +16,12 @@ def price = close;
 
 # Only enable one of the selectedNK below.
 #def selectedNK = nK_Low;
-#def selectedNK = nK_Mid;
-def selectedNK = nK_High; 
+def selectedNK = nK_Mid;
+#def selectedNK = nK_High; 
 
 # set darkColors to 1 for Dark Mode, 0 for Light Mode.
-def darkColors = 0;
-#def darkColors = 1;
+#def darkColors = 0;
+def darkColors = 1;
 
 ###
 ### END CONTROL PANEL
