@@ -16,18 +16,20 @@ def bbLow = BolKelDelta_Low <= 0;
 def bbMid = BolKelDelta_Mid <= 0;
 def bbHigh = BolKelDelta_High <= 0;
 
+### This assigns a 1 to indicate the Compression, others get 0.
 def sqHigh = if bbHigh then 1 else 0;
 def sqMid = if (bbMid and !bbHigh) then 1 else 0;
 def sqLow = if (bbLow and !bbMid) then 1 else 0;
+###
 
-def selectedNK = if sqHigh > 0 then nK_High else if sqMid > 0 then nK_Mid else nk_Low;
+
+#def selectedNK = if sqHigh then 1.0 else if sqMid then 1.5 else if sqLow then 2.0 else 1.5;
+def selectedNK = ((sqHigh)+(sqMid*1.5)+(sqLow*2.0));
 #def selectedNK = nK_Low;
 #def selectedNK = nK_Mid;
-#def selectedNK = nK_High;
+#def selectedNK = nK_High; 
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
-
-#def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = if sqHigh > 0 then nK_High else if sqMid > 0 then nK_Mid else nk_Low, nBB = nBB ).SqueezeAlert == 0;
 
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
 def upMomentumStart = squeezeMomentum > squeezeMomentum[1] and squeezeMomentum[1] <= squeezeMomentum[2];
