@@ -49,6 +49,7 @@ def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
 #def theRatio = (sumFiredLong/squeezeCount)*100;
 
+  #disambiguate Sq state
 AddLabel( sqLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
 AddLabel( sqMid, "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
 AddLabel( sqHigh, "High " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
