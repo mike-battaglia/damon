@@ -12,15 +12,23 @@ def BolKelDelta_Low = reference BollingerBands("num_dev_up" = nBB, "length" = Le
 def BolKelDelta_High = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_High, "length" = Length)."Upper_Band";
 
 
-def sqLow = BolKelDelta_Low <= 0;
-def sqMid = BolKelDelta_Mid <= 0;
-def sqHigh = BolKelDelta_High <= 0;
+def bbLow = BolKelDelta_Low <= 0;
+def bbMid = BolKelDelta_Mid <= 0;
+def bbHigh = BolKelDelta_High <= 0;
 
-def selectedNK = if sqHigh then nK_High else if sqMid then nK_Mid else if sqLow then nK_Low else nK_Mid;
+def sqHigh = if bbHigh then 1 else 0;
+def sqMid = if (bbMid and !bbHigh) then 1 else 0;
+def sqLow = if (bbLow and !bbMid) then 1 else 0;
 
+def selectedNK = if sqHigh > 0 then nK_High else if sqMid > 0 then nK_Mid else nk_Low;
+#def selectedNK = nK_Low;
 #def selectedNK = nK_Mid;
+#def selectedNK = nK_High;
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
+
+#def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = if sqHigh then nK_High else if sqMid then nK_Mid else sqLow, nBB = nBB ).SqueezeAlert == 0;
+
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
 def upMomentumStart = squeezeMomentum > squeezeMomentum[1] and squeezeMomentum[1] <= squeezeMomentum[2];
 def downMomentumStart = squeezeMomentum < squeezeMomentum[1] and squeezeMomentum[1] >= squeezeMomentum[2];
@@ -40,18 +48,17 @@ def firedShort = fired and ((LongShortDefinition == LongShortDefinition.HistAbov
 def squeezeCount = TotalSum(fired);
 
 ### ???
-def theSqueezes = if TTM_Squeeze () .SqueezeAlert == 0 then 1 else 0;
-def sumSqueezes = Sum(theSqueezes, 10);
-def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 and TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
+#def theSqueezes = if TTM_Squeeze () .SqueezeAlert == 0 then 1 else 0;
+#def sumSqueezes = Sum(theSqueezes, 10);
+#def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 and TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
 ### ???
 
 def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
 #def theRatio = (sumFiredLong/squeezeCount)*100;
 
-  #disambiguate Sq state
-AddLabel( sqLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
-AddLabel( sqMid, "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
-AddLabel( sqHigh, "High " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + sqLow + " " + sqMid + " " + sqHigh);
+AddLabel( sqLow>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+AddLabel( sqMid>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+AddLabel( sqHigh>0, "(nk" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
 
 #AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
