@@ -20,7 +20,7 @@ def selectedNK = nK_Low;
 #def selectedNK = nK_High; 
 
 # set darkColors to 1 for Dark Mode, 0 for Light Mode.
-def darkColors = 1;
+def darkColors = 0;
 
 ###
 ### END CONTROL PANEL
@@ -69,10 +69,22 @@ def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
 def theRatio = Round((sumFiredLong/squeezeCount)*100,0);
 
-label.AssignValueColor(if sqLow and (selectedNK == nK_Low) then label.Color("Low") else label.Color("Void"));
+plot results = 0;
+results.AssignValueColor(if results then color.black else color.black);
+### Colors:
+#Dark red: (128, 0, 0)
+#Medium red: (192, 0, 0)
+#Dark green: (0, 128, 0)
+#Medium green: (0, 192, 0)
+#Dark orange: (255, 140, 0)
+#Medium orange: (255, 165, 0)
+#Dark blue: (0, 0, 128)
+#Medium blue: (0, 0, 192)
 
-AssignBackgroundColor(if sqLow and (selectedNK == nK_Low) then (if darkColors then color.dark_GREEN else color.green) else color.black);
+AssignBackgroundColor(if sqLow and (selectedNK == nK_Low) then (if darkColors then CreateColor(0, 88, 0) else CreateColor(0, 128, 0)) else color.black );
 
-AddLabel( sqLow and (selectedNK == nK_Low), "L (" + squeezeCount + ") " + theRatio + "%");
-AddLabel( sqMid and (selectedNK == nK_Mid), "M (" + squeezeCount + ") " + theRatio + "%");
-AddLabel( sqHigh and (selectedNK == nK_High), "H (" + squeezeCount + ") " + theRatio + "%");
+AddLabel( sqLow and (selectedNK == nK_Low), "" + squeezeCount + "_" + theRatio + "%", color.white);
+
+AddLabel( sqMid and (selectedNK == nK_Mid), "(" + squeezeCount + ") " + theRatio + "%");
+
+AddLabel( sqHigh and (selectedNK == nK_High), "(" + squeezeCount + ") " + theRatio + "%");
