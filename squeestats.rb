@@ -15,12 +15,13 @@ def price = close;
 ###
 
 # Only enable one of the selectedNK below.
-def selectedNK = nK_Low;
+#def selectedNK = nK_Low;
 #def selectedNK = nK_Mid;
-#def selectedNK = nK_High; 
+def selectedNK = nK_High; 
 
 # set darkColors to 1 for Dark Mode, 0 for Light Mode.
 def darkColors = 0;
+#def darkColors = 1;
 
 ###
 ### END CONTROL PANEL
@@ -72,19 +73,19 @@ def theRatio = Round((sumFiredLong/squeezeCount)*100,0);
 plot results = 0;
 results.AssignValueColor(if results then color.black else color.black);
 ### Colors:
-#Dark red: (128, 0, 0)
-#Medium red: (192, 0, 0)
-#Dark green: (0, 128, 0)
-#Medium green: (0, 192, 0)
-#Dark orange: (255, 140, 0)
-#Medium orange: (255, 165, 0)
-#Dark blue: (0, 0, 128)
-#Medium blue: (0, 0, 192)
+#Dark red: (88, 0, 0)
+#Medium red: (128, 0, 0)
+#Dark green: (0, 88, 0)
+#Medium green: (0, 128, 0)
+#Dark orange: (128, 77, 0)
+#Medium orange: (128, 99, 0)
+#Dark blue: (0, 0, 88)
+#Medium blue: (0, 0, 128)
 
-AssignBackgroundColor(if sqLow and (selectedNK == nK_Low) then (if darkColors then CreateColor(0, 88, 0) else CreateColor(0, 128, 0)) else color.black );
+AssignBackgroundColor(if sqLow and (selectedNK == nK_Low) then (if darkColors then CreateColor(0, 88, 0) else CreateColor(0, 128, 0)) else if sqMid and (selectedNK == nK_Mid) then (if darkColors then CreateColor(88, 0, 0) else CreateColor(175, 0, 0)) else if sqHigh and (selectedNK == nK_High) then (if darkColors then CreateColor(128, 77, 0) else CreateColor(220, 100, 0)) else color.black );
 
-AddLabel( sqLow and (selectedNK == nK_Low), "" + squeezeCount + "_" + theRatio + "%", color.white);
+AddLabel( sqLow and (selectedNK == nK_Low), "" + squeezeCount + "   " + theRatio + "%", color.white);
 
-AddLabel( sqMid and (selectedNK == nK_Mid), "(" + squeezeCount + ") " + theRatio + "%");
+AddLabel( sqMid and (selectedNK == nK_Mid), "" + squeezeCount + "   " + theRatio + "%", color.white);
 
-AddLabel( sqHigh and (selectedNK == nK_High), "(" + squeezeCount + ") " + theRatio + "%");
+AddLabel( sqHigh and (selectedNK == nK_High), "" + squeezeCount + "   " + theRatio + "%", color.white);
