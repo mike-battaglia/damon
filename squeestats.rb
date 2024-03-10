@@ -7,6 +7,26 @@ def nK_Mid = 1.5;
 def nK_Low = 2.0;
 def price = close;
 
+###
+### START CONTROL PANEL
+### USE THIS SECTION TO ENABLE
+### HIGM / MEDIUM / LOW
+### AND DARK COLORS
+###
+
+# Only enable one of the selectedNK below.
+def selectedNK = nK_Low;
+#def selectedNK = nK_Mid;
+#def selectedNK = nK_High; 
+
+# set darkColors to 1 for Dark Mode, 0 for Light Mode.
+def darkColors = 1;
+
+###
+### END CONTROL PANEL
+###
+
+
 def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Mid, "length" = Length)."Upper_Band";
 def BolKelDelta_Low = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Low, "length" = Length)."Upper_Band";
 def BolKelDelta_High = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_High, "length" = Length)."Upper_Band";
@@ -22,12 +42,8 @@ def sqMid = if (bbMid and !bbHigh) then 1 else 0;
 def sqLow = if (bbLow and !bbMid) then 1 else 0;
 ###
 
-
 #def selectedNK = if sqHigh then 1.0 else if sqMid then 1.5 else if sqLow then 2.0 else 1.5;
-def selectedNK = ((sqHigh)+(sqMid*1.5)+(sqLow*2.0));
-#def selectedNK = nK_Low;
-#def selectedNK = nK_Mid;
-#def selectedNK = nK_High; 
+#def selectedNK = ((sqHigh)+(sqMid*1.5)+(sqLow*2.0));
 
 def inSqueeze = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert == 0;
 
@@ -49,18 +65,14 @@ def firedShort = fired and ((LongShortDefinition == LongShortDefinition.HistAbov
 
 def squeezeCount = TotalSum(fired);
 
-### ???
-#def theSqueezes = if TTM_Squeeze () .SqueezeAlert == 0 then 1 else 0;
-#def sumSqueezes = Sum(theSqueezes, 10);
-#def theSqueezeFired = if TTM_Squeeze () .SqueezeAlert[1] == 0 and TTM_Squeeze().SqueezeAlert == 1 then 1 else 0;
-### ???
-
 def sumFiredLong = TotalSum(firedLong);
 def sumFiredShort = TotalSum(firedShort);
-#def theRatio = (sumFiredLong/squeezeCount)*100;
+def theRatio = Round((sumFiredLong/squeezeCount)*100,0);
 
-AddLabel( sqLow>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
-AddLabel( sqMid>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
-AddLabel( sqHigh>0, "(nk=" + selectedNK + ") " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + " | L" + sqLow + " M" + sqMid + " H" + sqHigh);
+label.AssignValueColor(if sqLow and (selectedNK == nK_Low) then label.Color("Low") else label.Color("Void"));
 
-#AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
+AssignBackgroundColor(if sqLow and (selectedNK == nK_Low) then (if darkColors then color.dark_GREEN else color.green) else color.black);
+
+AddLabel( sqLow and (selectedNK == nK_Low), "L (" + squeezeCount + ") " + theRatio + "%");
+AddLabel( sqMid and (selectedNK == nK_Mid), "M (" + squeezeCount + ") " + theRatio + "%");
+AddLabel( sqHigh and (selectedNK == nK_High), "H (" + squeezeCount + ") " + theRatio + "%");
