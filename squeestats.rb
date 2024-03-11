@@ -19,14 +19,13 @@ def xLow = if sqLow and !sqMid then 1 else 0;
 def xMid = if sqMid and !sqHigh then 1 else 0;
 def xHigh = if sqHigh then 1 else 0;
 
-input SqueezeType = { Low, default Mid, High, All};
+#input SqueezeType = { Low, default Mid, High, All};
 
 #def selectedNK = if SqueezeType == SqueezeType.Mid then nK_Mid else if SqueezeType == SqueezeType.Low then nK_Low else if SqueezeType == SqueezeType.High then nK_High else nK_Mid;
 
 def selectedNK = if xMid == 1 then nK_Mid else if xLow == 1 then nK_Low else if xHigh == 1 then nK_High else nK_Mid;
 
-def inSqueeze = TTM_Squeeze(price = price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert
-== 0;
+def inSqueeze = TTM_Squeeze(price = price, length = Length, nk = selectedNK, nBB = nBB).SqueezeAlert == 0;
 
 def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
 def upMomentumStart = squeezeMomentum > squeezeMomentum[1] and squeezeMomentum[1] <= squeezeMomentum[2];
@@ -57,8 +56,8 @@ def sumFiredShort = TotalSum(firedShort);
 #def theRatio = (sumFiredLong/squeezeCount)*100;
 
   #disambiguate Sq state
-AddLabel( xLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
-AddLabel( xMid, "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
+AddLabel( xLow,selectedNK + "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
+AddLabel( xMid,selectedNK + "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
 AddLabel( xHigh, "High " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
 
 #AssignBackgroundColor( if sqLow and !sqMid and !sqHigh then color.dark_green else if sqMid and !sqHigh then color.dark_red else if sqHigh then color.dark_orange else color.black);
