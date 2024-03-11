@@ -11,7 +11,6 @@ def BolKelDelta_Mid = reference BollingerBands("num_dev_up" = nBB, "length" = Le
 def BolKelDelta_Low = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_Low, "length" = Length)."Upper_Band";
 def BolKelDelta_High = reference BollingerBands("num_dev_up" = nBB, "length" = Length )."upperband" - KeltnerChannels("factor" = nK_High, "length" = Length)."Upper_Band";
 
-
 def sqLow = BolKelDelta_Low <= 0;
 def sqMid = BolKelDelta_Mid <= 0;
 def sqHigh = BolKelDelta_High <= 0;
@@ -22,13 +21,14 @@ def xHigh = if sqHigh then 1 else 0;
 
 input SqueezeType = { Low, default Mid, High, All};
 
-def selectedNK = if SqueezeType == SqueezeType.Mid then nK_Mid else if SqueezeType ==
-SqueezeType.Low then nK_Low else if SqueezeType == SqueezeType.High then nK_High else nK_Mid;
+#def selectedNK = if SqueezeType == SqueezeType.Mid then nK_Mid else if SqueezeType == SqueezeType.Low then nK_Low else if SqueezeType == SqueezeType.High then nK_High else nK_Mid;
+
+def selectedNK = if xMid == 1 then nK_Mid else if xLow == 1 then nK_Low else if xHigh == 1 then nK_High else nK_Mid;
 
 def inSqueeze = TTM_Squeeze(price = price, length = Length, nk = selectedNK, nBB = nBB ).SqueezeAlert
 == 0;
 
-def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = SqueezeType, nBB = nBB );
+def squeezeMomentum = TTM_Squeeze(price =  price, length = Length, nk = selectedNK, nBB = nBB );
 def upMomentumStart = squeezeMomentum > squeezeMomentum[1] and squeezeMomentum[1] <= squeezeMomentum[2];
 def downMomentumStart = squeezeMomentum < squeezeMomentum[1] and squeezeMomentum[1] >= squeezeMomentum[2];
 def upMomentumLength = if upMomentumStart then 1 else if !downMomentumStart then upMomentumLength[1] + 1 else 0;
@@ -57,7 +57,7 @@ def sumFiredShort = TotalSum(firedShort);
 #def theRatio = (sumFiredLong/squeezeCount)*100;
 
   #disambiguate Sq state
-AddLabel( xLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + sqMid + " " + sqHigh);
+AddLabel( xLow, "Low " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
 AddLabel( xMid, "Mid " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
 AddLabel( xHigh, "High " + squeezeCount + "=" + sumFiredLong + "+" + sumFiredShort + ", |" + xLow + " " + xMid + " " + xHigh);
 
