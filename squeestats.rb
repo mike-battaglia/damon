@@ -20,7 +20,7 @@ def xLow = if sqLow and !sqMid then 1 else 0;
 def xMid = if sqMid and !sqHigh then 1 else 0;
 def xHigh = if sqHigh then 1 else 0;
 
-input SqueezeType = { Low, Mid, High, default All};
+input SqueezeType = { Low, default Mid, High, All};
 
 def selectedNK = if SqueezeType == SqueezeType.Mid then nK_Mid else if SqueezeType ==
 SqueezeType.Low then nK_Low else if SqueezeType == SqueezeType.High then nK_High else nK_Mid;
